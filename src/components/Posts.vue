@@ -7,7 +7,6 @@ import { db } from "../firebaseConfig";
 import { auth } from "../firebaseConfig";
 import { ref, watchEffect } from "vue";
 import Comments from "../components/Comments.vue";
-const currentUser = auth?.currentUser?.uid;
 const comment = ref("");
 const comments = ref([]);
 const isLiked = ref(false);
@@ -36,21 +35,18 @@ const props = defineProps({
         type: Object
     }
 });
-
 const postComments = async () => {
     await addDoc(collection(db, "posts", props.id, "comments"), {
-        id: props.id,
-        username: props.username,
-        profile: props.profile,
+        id: auth.currentUser?.uid,
+        username: auth?.currentUser?.displayName,
+        profile: auth?.currentUser?.photoURL,
         comment: comment.value,
         timeStamp: serverTimestamp()
     });
-
     setTimeout(() => {
         comment.value = "";
     }, 1000)
 };
-
 // comments
 watchEffect(() => {
     const commentRef = collection(db, "posts", props.id, "comments");
@@ -62,10 +58,8 @@ watchEffect(() => {
         });
         comments.value = commentsData;
     });
-
     return () => unsubscribe();
 });
-
 watchEffect(() => {
     const likesRef = collection(db, "posts", props.id, "likes");
     const q = query(likesRef);
@@ -76,17 +70,14 @@ watchEffect(() => {
         });
         likes.value = postLikes;
     });
-
     return () => unsubscribe();
 });
-
 watchEffect(() => {
       isLiked.value = likes.value.findIndex((post) => post.id === auth.currentUser.uid ) !== -1;
 })
 // like functionality
-
 const likePost = async () => {
-    await setDoc(doc(db, "posts", props.id, "likes", currentUser), {
+    await setDoc(doc(db, "posts", props.id, "likes", auth?.currentUser?.uid), {
             username: props.username
     })
 };
@@ -101,11 +92,9 @@ const likePost = async () => {
             </div>
             <DotsHorizontalIcon class="h-6 w-6 text-gray-500"/>
         </div>
-
         <div>
             <img :src="props.media" :alt="props.username" class="w-full object-cover">
         </div>
-
         <div class="flex justify-between pt-3 px-3">
             <div class="flex space-x-4">
                 <div>
@@ -123,7 +112,6 @@ const likePost = async () => {
                 <BookmarkIcon class="icon-style"/>
             </div>
         </div>
-
         <div>
             <div class="px-4 py-2 truncate">
                 <div v-if="likes.length > 0">
@@ -135,7 +123,6 @@ const likePost = async () => {
                 </div>
             </div>
         </div>
-
         <!-- comments -->
         <div class="overflow-y-scroll max-h-20 mb-4 ml-4 scrollbar-thin">
             <div class="items-center mb-2 space-x-2" v-for="comment in comments" :key="comment.id">
@@ -148,11 +135,9 @@ const likePost = async () => {
              />
             </div>
         </div>
-
         <div class="ml-4 text-gray-400 text-xs lg:text-base font-bold">
             <timeago :datetime="props?.timeStamp?.toDate()" :auto-update="60"></timeago>
         </div>
-
         <!-- comment input -->
         <div class="flex justify-between items-center p-2">
             <div class="flex items-center space-x-2">
@@ -163,12 +148,9 @@ const likePost = async () => {
                     <input type="text" placeholder="Add a comment.." class="py-2 px-2 w-full appearance-none focus:outline-none" v-model="comment">
                 </div>
             </div>
-
             <div>
                  <button :disabled="!comment" class="bg-[#1d9bf0] text-white rounded-full shadow-md hover:bg-[#1a8cd8] disabled:hover:bg-[#1d9bf0] disabled:opacity-50 disabled:cursor-default py-1.5 px-4 font-bold" @click="postComments()">Post</button>
             </div>
-
-
         </div>
         </div>
 </main>
