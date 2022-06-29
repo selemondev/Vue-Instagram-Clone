@@ -125,7 +125,7 @@ const likePost = async () => {
         </div>
 
         <div>
-            <div class="p-4 truncate">
+            <div class="px-4 py-2 truncate">
                 <div v-if="likes.length > 0">
                     <p class="font-bold">{{likes.length}} Likes</p>
                 </div>
