@@ -9,6 +9,9 @@ import { auth, db } from "../firebaseConfig.js";
 import { getDoc, doc } from "firebase/firestore";
 import { ref, watchEffect } from "vue";
 import { useModalStore } from "../stores/modal";
+import { signOut } from "@firebase/auth";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const user = ref([]);
 const currentUser = auth?.currentUser?.uid;
 watchEffect(() => {
@@ -21,6 +24,10 @@ const modal = useModalStore();
 const isOpen = ref(modal.isOpen);
 function openModal() {
     modal.modalOpen(isOpen.value = true);
+};
+const handleLogOut = async () => {
+    await signOut(auth);
+    router.push("/login")
 }
 </script>
 <template>
@@ -62,7 +69,7 @@ function openModal() {
             <HeartIcon class="w-8 h-8"/>
         </div>
 
-        <div v-for="currentUser in user" :key="currentUser.id">
+        <div v-for="currentUser in user" :key="currentUser.id" @click="handleLogOut()">
         <img :src="currentUser.profile" :alt="currentUser.username" class="w-8 h-8 rounded-full">
         </div>
     </div>
