@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+    body {
+        @apply font-poppins bg-[#FAFAFA]
+    }
+}
+@layer components {
+    .grid-layout {
+        @apply grid place-items-center items-center
+    }
+    .icon-style {
+        @apply w-6 h-6 md:w-9 md:h-9
+    }
+}
