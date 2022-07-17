@@ -55,7 +55,9 @@ const handleLogOut = async () => {
             <HomeIcon class="w-8 h-8"/>
         </div>
         <div class="hidden lg:block">
-            <img :src="MessengerIcon" alt="Icon" class="h-6 w-6">
+           <router-link to="/chat">
+             <img :src="MessengerIcon" alt="Icon" class="h-6 w-6"/>
+           </router-link>
         </div>
         <div  @click="openModal()">
             <PlusCircleIcon class="w-8 h-8 hover:scale-110 ease-in duration-200"/>
